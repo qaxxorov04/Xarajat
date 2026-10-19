@@ -1,0 +1,669 @@
+<!doctype html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#0a4f5c">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Xarajat">
+<meta name="description" content="Kundalik kirim-chiqim va qarzlarni yuritish daftari">
+<title>Xarajat daftari</title>
+<style>
+:root{
+  --bg:#edf2f2; --surface:#ffffff; --ink:#10242b; --muted:#566b72; --line:#d5e0e1;
+  --chip:#e1ebec; --brand:#0e7c86; --brand-ink:#ffffff; --deep:#0a4f5c;
+  --exp:#b4303c; --inc:#17794f;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --round:ui-rounded,"SF Pro Rounded",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+}
+@media (prefers-color-scheme:dark){
+  :root{
+    --bg:#0c1618; --surface:#142225; --ink:#e4f0f0; --muted:#93a8ad; --line:#26373b;
+    --chip:#1d2f33; --brand:#3cc4c4; --brand-ink:#04201f; --deep:#0b3f49;
+    --exp:#f08a92; --inc:#6fd6a2;
+  }
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 var(--sans)}
+#app{max-width:560px;margin:0 auto;min-height:100vh;min-height:100dvh}
+main{padding:22px 16px calc(100px + env(safe-area-inset-bottom))}
+h1,h2,h3{font-family:var(--round);margin:0;letter-spacing:-.01em}
+h1{font-size:28px;font-weight:800;line-height:1.15}
+h2{font-size:18px;font-weight:700;margin:28px 0 6px}
+.sub{color:var(--muted);font-size:14px;margin:4px 0 0}
+.m{color:var(--muted);font-size:13px}
+.num{font-family:var(--round);font-variant-numeric:tabular-nums;font-weight:800}
+button{font:inherit;color:inherit;cursor:pointer}
+
+/* bosh karta: koshin naqshi */
+.hero{
+  margin:18px 0 6px;padding:20px 18px 18px;border-radius:22px;color:#fff;background-color:var(--deep);
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48'%3E%3Cg fill='none' stroke='%23ffffff' stroke-opacity='.11' stroke-width='1.2'%3E%3Crect x='10' y='10' width='28' height='28'/%3E%3Crect x='10' y='10' width='28' height='28' transform='rotate(45 24 24)'/%3E%3C/g%3E%3C/svg%3E");
+}
+.hero .m{color:rgba(255,255,255,.78)}
+.hero .big{font-size:38px;line-height:1.1;margin:4px 0 14px;word-break:break-word}
+.hero .pair{display:grid;grid-template-columns:1fr 1fr;gap:12px;border-top:1px solid rgba(255,255,255,.22);padding-top:12px}
+.hero .pair b{display:block;font-family:var(--round);font-variant-numeric:tabular-nums;font-size:18px}
+
+/* qatorlar */
+.rows{margin:0}
+.row{display:flex;align-items:center;gap:12px;padding:11px 0;border-top:1px solid var(--line)}
+.row:first-child{border-top:0}
+.ico{width:40px;height:40px;border-radius:12px;background:var(--chip);display:grid;place-items:center;font-size:20px;flex:none}
+.grow{flex:1;min-width:0}
+.t{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.amt{font-family:var(--round);font-variant-numeric:tabular-nums;font-weight:700;white-space:nowrap;min-width:6.5em;text-align:right}
+.neg{color:var(--exp)} .pos{color:var(--inc)}
+.x{border:0;background:none;color:var(--muted);font-size:18px;min-width:44px;min-height:44px;border-radius:12px}
+.day{display:flex;justify-content:space-between;align-items:baseline;margin:22px 0 2px;font-weight:700}
+.empty{color:var(--muted);padding:18px 0}
+
+/* formalar */
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:16px;margin:16px 0}
+.lbl{display:block;font-size:14px;font-weight:600;margin:16px 0 6px}
+.panel>.lbl:first-child{margin-top:0}
+input,select{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:14px;min-height:48px;padding:0 14px;width:100%}
+input:focus-visible,select:focus-visible,button:focus-visible{outline:3px solid var(--brand);outline-offset:2px}
+.btn{min-height:48px;border:0;border-radius:14px;padding:0 18px;background:var(--brand);color:var(--brand-ink);font-weight:700}
+.btn.wide{width:100%;margin-top:18px}
+.btn.soft{background:var(--chip);color:var(--ink)}
+.btn.warn{background:transparent;color:var(--exp);border:1px solid var(--exp)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.seg{display:flex;background:var(--chip);border-radius:14px;padding:4px;gap:4px;margin:0 0 4px}
+.seg button{flex:1;min-height:42px;border:0;border-radius:10px;background:none;font-weight:600;color:var(--muted)}
+.seg button[aria-pressed="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.14)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:1px solid var(--line);background:var(--bg);border-radius:999px;min-height:42px;padding:0 14px}
+.chip[aria-pressed="true"]{background:var(--brand);color:var(--brand-ink);border-color:var(--brand);font-weight:600}
+.chips.need .chip{border-color:var(--exp)}
+.ctl{display:grid;gap:10px;margin:16px 0 4px}
+.ctl2{display:grid;grid-template-columns:1.4fr 1fr;gap:10px}
+
+/* hisobot */
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:16px 0 4px}
+.stat{padding:10px 0;border-top:3px solid var(--line)}
+.stat.i{border-color:var(--inc)} .stat.e{border-color:var(--exp)} .stat.q{border-color:var(--brand)}
+.stat b{display:block;font-family:var(--round);font-variant-numeric:tabular-nums;font-size:17px;word-break:break-word}
+.bar{height:6px;border-radius:99px;background:var(--chip);overflow:hidden;margin-top:6px}
+.bar>span{display:block;height:100%;background:var(--exp);border-radius:99px}
+.bar.inc>span{background:var(--inc)}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{padding:9px 3px;text-align:right;border-top:1px solid var(--line);font-variant-numeric:tabular-nums}
+th{font-weight:600;color:var(--muted);border-top:0}
+th:first-child,td:first-child{text-align:left}
+tfoot td{font-weight:700}
+
+/* pastki menyu */
+nav{position:fixed;left:0;right:0;bottom:0;background:var(--surface);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom);z-index:5}
+nav .in{max-width:560px;margin:0 auto;display:grid;grid-template-columns:repeat(5,1fr)}
+nav button{border:0;background:none;padding:8px 2px 7px;display:grid;gap:2px;justify-items:center;color:var(--muted);font-size:11px;min-height:58px}
+nav button .i{font-size:21px;line-height:1}
+nav button[aria-current="page"]{color:var(--brand);font-weight:700}
+#toast{position:fixed;left:50%;bottom:calc(76px + env(safe-area-inset-bottom));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:11px 16px;border-radius:12px;max-width:90vw;opacity:0;pointer-events:none;transition:opacity .2s;z-index:9;font-size:14px;text-align:center}
+#toast.on{opacity:1}
+.note{background:var(--chip);border-radius:14px;padding:12px 14px;margin:16px 0;font-size:14px}
+.note button{margin-top:10px;background:var(--surface);border:1px solid var(--line)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div id="app">
+  <main id="view"></main>
+</div>
+<nav aria-label="Asosiy menyu"><div class="in">
+  <button data-act="tab" data-v="home"><span class="i" aria-hidden="true">🏠</span>Bosh</button>
+  <button data-act="tab" data-v="add"><span class="i" aria-hidden="true">➕</span>Qo'shish</button>
+  <button data-act="tab" data-v="report"><span class="i" aria-hidden="true">📊</span>Hisobot</button>
+  <button data-act="tab" data-v="debts"><span class="i" aria-hidden="true">🤝</span>Qarzlar</button>
+  <button data-act="tab" data-v="settings"><span class="i" aria-hidden="true">⚙️</span>Sozlama</button>
+</div></nav>
+<div id="toast" role="status" aria-live="polite"></div>
+<noscript>Bu ilova ishlashi uchun JavaScript yoqilgan bo'lishi kerak.</noscript>
+
+<script>
+(() => {
+'use strict';
+
+/* ---------------------------------------------------------- sozlamalar */
+const KEY = 'xarajat_v1';
+const MONTHS = ['Yanvar','Fevral','Mart','Aprel','May','Iyun','Iyul','Avgust','Sentyabr','Oktyabr','Noyabr','Dekabr'];
+const MON3 = ['Yan','Fev','Mar','Apr','May','Iyn','Iyl','Avg','Sen','Okt','Noy','Dek'];
+const DAYS = ['Yakshanba','Dushanba','Seshanba','Chorshanba','Payshanba','Juma','Shanba'];
+const CATS = [
+  {id:'taksi', name:'Taksi', icon:'🚕', kw:['taksi','yandex','taxi','mashina','benzin']},
+  {id:'avtobus', name:'Avtobus', icon:'🚌', kw:['avtobus','metro','marshrutka',"yo'l haqi",'yol haqi']},
+  {id:'dokon', name:"Do'kon", icon:'🛒', kw:['dokon',"do'kon",'bozor','market','supermarket','non','sut',"go'sht",'gosht','meva','sabzavot']},
+  {id:'oshxona', name:'Oshxona', icon:'🍽️', kw:['oshxona','ovqat','tushlik','kafe','restoran','choyxona','osh','fastfood','kofe','choy']},
+  {id:'oqish', name:"O'qish", icon:'📚', kw:['oqish',"o'qish",'kitob','kurs','dars','daftar','ruchka','kontrakt','universitet']},
+  {id:'kiyim', name:'Kiyim', icon:'👕', kw:['kiyim',"ko'ylak",'koylak','shim','oyoq kiyim','krossovka','kurtka','poyabzal']},
+  {id:'uy', name:"Uy ro'zg'or", icon:'🏠', kw:['uy',"ro'zg'or",'rozgor','ijara','kommunal','gaz','svet','suv','internet','tozalash']},
+  {id:'salomatlik', name:'Salomatlik', icon:'💊', kw:['dori','apteka','shifokor','doktor','tish','tahlil','kasalxona']},
+  {id:'aloqa', name:'Aloqa', icon:'📱', kw:['telefon','paynet','aloqa','tarif','mobil']},
+  {id:'sovga', name:"Sovg'a", icon:'🎁', kw:['sovga',"sovg'a","tug'ilgan",'toy','marosim']},
+  {id:'dam', name:'Dam olish', icon:'🎉', kw:['kino','dam olish','sayohat',"o'yin",'oyin','teatr']},
+  {id:'boshqa', name:'Boshqa', icon:'📦', kw:[]},
+];
+const catOf = id => CATS.find(c => c.id === id) || CATS[CATS.length - 1];
+
+/* ---------------------------------------------------------- ma'lumot */
+let db = load();
+function load(){
+  try{
+    const r = JSON.parse(localStorage.getItem(KEY));
+    if(r && Array.isArray(r.records) && Array.isArray(r.debts)) return r;
+  }catch(e){}
+  return {records:[], debts:[], lastBackup:null};
+}
+function save(){
+  try{ localStorage.setItem(KEY, JSON.stringify(db)); return true; }
+  catch(e){ toast("Saqlab bo'lmadi. Brauzer xotirasi yopiq yoki to'lgan."); return false; }
+}
+
+/* ---------------------------------------------------------- yordamchilar */
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const pad = n => String(n).padStart(2,'0');
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,7);
+function fmtNum(n){
+  const s = Math.abs(Math.round(n)).toString().replace(/\B(?=(\d{3})+(?!\d))/g,' ');
+  return (n < -0.5 ? '−' : '') + s;
+}
+const money = n => fmtNum(n) + " so'm";
+const ymd = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const todayStr = () => ymd(new Date());
+const parseYMD = s => { const [y,m,d] = s.split('-').map(Number); return new Date(y, m-1, d); };
+const addDays = (s,n) => { const d = parseYMD(s); d.setDate(d.getDate()+n); return ymd(d); };
+const fmtDay = s => { const [y,m,d] = s.split('-'); return `${d}.${m}.${y}`; };
+const longDay = s => { const d = parseYMD(s); return `${d.getDate()}-${MONTHS[d.getMonth()].toLowerCase()}, ${DAYS[d.getDay()].toLowerCase()}`; };
+const nowTime = () => { const d = new Date(); return `${pad(d.getHours())}:${pad(d.getMinutes())}`; };
+const norm = s => String(s).toLowerCase().replace(/[’‘ʻʼ`´]/g, "'");
+
+let toastTimer;
+function toast(msg){
+  const el = $('#toast');
+  el.textContent = msg; el.classList.add('on');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('on'), 2600);
+}
+
+/* "taksi 25000", "non 8 ming", "kitob 120 000", "kofe 25k", "bozor 1.5 mln" */
+const AMT = /(\d{1,3}(?:[\s.,]\d{3})+|\d+(?:[.,]\d+)?)\s*(ming|k|mln|million)?\s*(?:so['’`ʻʼ]?m|sum|som)?\s*$/i;
+function parseLine(text){
+  text = (text || '').trim();
+  const m = AMT.exec(text);
+  if(!m) return {note:text, amount:null};
+  const raw = m[1];
+  let v = /[\s.,]\d{3}(?!\d)/.test(raw) && /^\d{1,3}([\s.,]\d{3})+$/.test(raw)
+    ? parseFloat(raw.replace(/[\s.,]/g,''))
+    : parseFloat(raw.replace(',', '.'));
+  if(!isFinite(v)) return {note:text, amount:null};
+  const u = (m[2] || '').toLowerCase();
+  if(u === 'ming' || u === 'k') v *= 1000;
+  else if(u === 'mln' || u === 'million') v *= 1e6;
+  v = Math.round(v * 100) / 100;
+  if(v <= 0 || v > 1e12) return {note:text, amount:null};
+  return {note:text.slice(0, m.index).trim(), amount:v};
+}
+function guessCat(note){
+  const n = norm(note);
+  const words = n.split(/[^\p{L}\p{N}']+/u).filter(Boolean);
+  for(const c of CATS){
+    for(const k of c.kw){
+      if(k.includes(' ') ? n.includes(k) : words.some(w => w.startsWith(k))) return c.id;
+    }
+  }
+  return null;
+}
+function normName(s){
+  s = (s || '').trim().replace(/\s+/g,' ');
+  if(!s) return '';
+  const key = s.toLowerCase();
+  const known = db.debts.find(d => d.person.toLowerCase() === key);
+  if(known) return known.person;
+  return s.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ');
+}
+
+/* ---------------------------------------------------------- holat */
+const now0 = new Date();
+const S = {
+  tab:'home', kind:'expense', cat:null, catManual:false, draft:'', date:null,
+  period:'oy', month:now0.getMonth(), year:now0.getFullYear(), view:'jami', ddraft:''
+};
+
+/* ---------------------------------------------------------- hisob-kitob */
+function rangeFor(p, mo = S.month, yr = S.year){
+  const t = todayStr();
+  if(p === 'bugun') return [t, addDays(t,1)];
+  if(p === 'hafta') return [addDays(t,-6), addDays(t,1)];
+  if(p === 'oy') return [`${yr}-${pad(mo+1)}-01`, mo === 11 ? `${yr+1}-01-01` : `${yr}-${pad(mo+2)}-01`];
+  return [`${yr}-01-01`, `${yr+1}-01-01`];
+}
+const inRange = (list, rg) => list.filter(r => r.date >= rg[0] && r.date < rg[1]);
+function summarize(list){
+  const o = {inc:0, exp:0, byCat:new Map(), byNote:new Map()};
+  for(const r of list){
+    if(r.kind === 'income'){
+      o.inc += r.amount;
+      const k = norm(r.note.trim());
+      const e = o.byNote.get(k) || {name:r.note, sum:0, n:0};
+      e.sum += r.amount; e.n++; o.byNote.set(k, e);
+    }else{
+      o.exp += r.amount;
+      const e = o.byCat.get(r.cat) || {sum:0, n:0};
+      e.sum += r.amount; e.n++; o.byCat.set(r.cat, e);
+    }
+  }
+  return o;
+}
+function balances(){
+  const m = new Map();
+  for(const d of db.debts){
+    const k = d.person.toLowerCase();
+    const e = m.get(k) || {name:d.person, gave:0, took:0};
+    e[d.direction] += d.amount;
+    m.set(k, e);
+  }
+  return [...m.values()];
+}
+function periodTitle(p){
+  if(p === 'bugun') return 'Bugun';
+  if(p === 'hafta') return "So'nggi 7 kun";
+  if(p === 'oy') return `${MONTHS[S.month]} ${S.year}`;
+  return `${S.year}-yil`;
+}
+const sortDesc = (a,b) => (b.date + (b.time||'')).localeCompare(a.date + (a.time||'')) || (b.c||0) - (a.c||0);
+
+/* ---------------------------------------------------------- ko'rinishlar */
+function rowRec(r){
+  const inc = r.kind === 'income';
+  const c = catOf(r.cat);
+  return `<div class="row">
+    <div class="ico" aria-hidden="true">${inc ? '💰' : c.icon}</div>
+    <div class="grow"><div class="t">${esc(r.note)}</div><div class="m">${inc ? 'Kirim' : esc(c.name)}, ${fmtDay(r.date)}</div></div>
+    <div class="amt ${inc ? 'pos' : 'neg'}">${inc ? '+' : '−'}${fmtNum(r.amount)}</div>
+    <button class="x" data-act="del-rec" data-id="${esc(r.id)}" aria-label="Yozuvni o'chirish">✕</button>
+  </div>`;
+}
+
+function viewHome(){
+  const nd = new Date();
+  const today = inRange(db.records, rangeFor('bugun'));
+  const month = summarize(inRange(db.records, rangeFor('oy', nd.getMonth(), nd.getFullYear())));
+  const left = month.inc - month.exp;
+  const bal = balances();
+  const owedToMe = bal.reduce((a,b) => a + Math.max(b.gave,0), 0);
+  const iOwe = bal.reduce((a,b) => a + Math.max(b.took,0), 0);
+  const tsum = summarize(today);
+  const dayAgo = db.lastBackup ? (Date.now() - new Date(db.lastBackup).getTime()) / 864e5 : Infinity;
+  const needBackup = (db.records.length + db.debts.length) >= 10 && dayAgo > 30;
+  return `<h1>Xarajat daftari</h1>
+  <p class="sub">${longDay(todayStr())}</p>
+  <section class="hero" aria-label="Shu oy holati">
+    <div class="m">${MONTHS[nd.getMonth()]} oyida qoldi</div>
+    <div class="num big">${money(left)}</div>
+    <div class="pair">
+      <div><span class="m">Kirim</span><b>${money(month.inc)}</b></div>
+      <div><span class="m">Chiqim</span><b>${money(month.exp)}</b></div>
+    </div>
+  </section>
+  ${needBackup ? `<div class="note">Zaxira nusxa uzoq vaqtdan beri olinmagan. Ma'lumotlar faqat shu brauzerda saqlanadi.<br><button class="btn soft" data-act="tab" data-v="settings">Zaxira olish</button></div>` : ''}
+  <h2>Bugun, ${money(tsum.exp)} sarflandi</h2>
+  <div class="rows">${today.length ? [...today].sort(sortDesc).map(rowRec).join('') : `<div class="empty">Bugun hali yozuv yo'q. «Qo'shish» bo'limidan boshlang.</div>`}</div>
+  <h2>Qarzlar</h2>
+  <div class="rows">
+    <div class="row"><div class="grow"><div class="t">Menga qarz</div><div class="m">olishim kerak</div></div><div class="amt pos">${money(owedToMe)}</div></div>
+    <div class="row"><div class="grow"><div class="t">Men qarzdorman</div><div class="m">berishim kerak</div></div><div class="amt neg">${money(iOwe)}</div></div>
+  </div>`;
+}
+
+function viewAdd(){
+  const exp = S.kind === 'expense';
+  const date = S.date || todayStr();
+  const recent = [...db.records].sort((a,b) => (b.c||0) - (a.c||0)).slice(0,5);
+  return `<h1>Yozuv qo'shish</h1>
+  <p class="sub">Matn va summani birga yozing: <b>taksi 25000</b>, <b>non 8 ming</b></p>
+  <div class="panel">
+    <div class="seg" role="group" aria-label="Yozuv turi">
+      <button data-act="kind" data-v="expense" aria-pressed="${exp}">Chiqim</button>
+      <button data-act="kind" data-v="income" aria-pressed="${!exp}">Kirim</button>
+    </div>
+    <label class="lbl" for="quick">${exp ? 'Nimaga va qancha?' : 'Qayerdan va qancha?'}</label>
+    <input id="quick" type="text" autocomplete="off" autocapitalize="none" enterkeyhint="done" placeholder="${exp ? 'taksi 25000' : 'maosh 3 000 000'}" value="${esc(S.draft)}">
+    ${exp ? `<span class="lbl">Bo'lim</span>
+    <div class="chips" id="chips">${CATS.map(c => `<button class="chip" data-act="cat" data-id="${c.id}" aria-pressed="${S.cat === c.id}">${c.icon} ${esc(c.name)}</button>`).join('')}</div>` : ''}
+    <label class="lbl" for="date">Sana</label>
+    <input id="date" type="date" value="${date}" data-change="date">
+    <button class="btn wide" data-act="add">Qo'shish</button>
+  </div>
+  <h2>Oxirgi yozuvlar</h2>
+  <div class="rows">${recent.length ? recent.map(rowRec).join('') : `<div class="empty">Hali yozuv yo'q.</div>`}</div>`;
+}
+
+function yearOptions(){
+  const ys = new Set([now0.getFullYear(), S.year]);
+  db.records.forEach(r => ys.add(+r.date.slice(0,4)));
+  return [...ys].sort((a,b) => b - a);
+}
+
+function viewReport(){
+  const p = S.period;
+  const rg = rangeFor(p);
+  const list = inRange(db.records, rg);
+  const s = summarize(list);
+  const periods = [['bugun','Bugun'],['hafta','Hafta'],['oy','Oy'],['yil','Yil']];
+  const ctl = (p === 'oy'
+    ? `<div class="ctl2"><select aria-label="Oy" data-change="month">${MONTHS.map((m,i) => `<option value="${i}"${i === S.month ? ' selected' : ''}>${m}</option>`).join('')}</select>
+       <select aria-label="Yil" data-change="year">${yearOptions().map(y => `<option${y === S.year ? ' selected' : ''}>${y}</option>`).join('')}</select></div>`
+    : p === 'yil'
+    ? `<select aria-label="Yil" data-change="year">${yearOptions().map(y => `<option${y === S.year ? ' selected' : ''}>${y}</option>`).join('')}</select>`
+    : '');
+  let body;
+  if(!list.length){
+    body = `<div class="empty">Bu davrda yozuv yo'q.</div>`;
+  }else if(S.view === 'jami'){
+    const cats = [...s.byCat.entries()].sort((a,b) => b[1].sum - a[1].sum);
+    const incs = [...s.byNote.values()].sort((a,b) => b.sum - a.sum);
+    body = `<h2>Chiqim: nimaga ketgan</h2>
+    <div class="rows">${cats.length ? cats.map(([id,e]) => {
+      const c = catOf(id), pct = s.exp ? e.sum / s.exp * 100 : 0;
+      return `<div class="row"><div class="ico" aria-hidden="true">${c.icon}</div><div class="grow"><div class="t">${esc(c.name)}</div><div class="m">${e.n} ta yozuv, ${pct.toFixed(0)}%</div><div class="bar"><span style="width:${pct.toFixed(1)}%"></span></div></div><div class="amt neg">${fmtNum(e.sum)}</div></div>`;
+    }).join('') : `<div class="empty">Chiqim yo'q.</div>`}</div>
+    <h2>Kirim: qayerdan kelgan</h2>
+    <div class="rows">${incs.length ? incs.map(e => {
+      const pct = s.inc ? e.sum / s.inc * 100 : 0;
+      return `<div class="row"><div class="ico" aria-hidden="true">💰</div><div class="grow"><div class="t">${esc(e.name)}</div><div class="m">${e.n} ta yozuv</div><div class="bar inc"><span style="width:${pct.toFixed(1)}%"></span></div></div><div class="amt pos">${fmtNum(e.sum)}</div></div>`;
+    }).join('') : `<div class="empty">Kirim yo'q.</div>`}</div>`;
+    if(p === 'yil'){
+      let ti = 0, te = 0;
+      const rows = [];
+      for(let m = 0; m < 12; m++){
+        const ms = summarize(inRange(db.records, rangeFor('oy', m, S.year)));
+        if(!ms.inc && !ms.exp) continue;
+        ti += ms.inc; te += ms.exp;
+        rows.push(`<tr><td>${MON3[m]}</td><td class="pos">${fmtNum(ms.inc)}</td><td class="neg">${fmtNum(ms.exp)}</td><td>${fmtNum(ms.inc - ms.exp)}</td></tr>`);
+      }
+      body += `<h2>Oylar bo'yicha (so'm)</h2>
+      <table><thead><tr><th>Oy</th><th>Kirim</th><th>Chiqim</th><th>Qoldi</th></tr></thead>
+      <tbody>${rows.join('')}</tbody>
+      <tfoot><tr><td>Jami</td><td class="pos">${fmtNum(ti)}</td><td class="neg">${fmtNum(te)}</td><td>${fmtNum(ti - te)}</td></tr></tfoot></table>`;
+    }
+  }else{
+    const byDay = new Map();
+    [...list].sort(sortDesc).forEach(r => { if(!byDay.has(r.date)) byDay.set(r.date, []); byDay.get(r.date).push(r); });
+    body = [...byDay.entries()].map(([d, rs]) => {
+      const ds = summarize(rs);
+      const net = ds.inc - ds.exp;
+      return `<div class="day"><span>${longDay(d)}</span><span class="m">${net >= 0 ? '+' : '−'}${fmtNum(Math.abs(net))}</span></div><div class="rows">${rs.map(rowRec).join('')}</div>`;
+    }).join('');
+  }
+  return `<h1>Hisobot</h1>
+  <p class="sub">${periodTitle(p)}</p>
+  <div class="ctl">
+    <div class="seg" role="group" aria-label="Davr">${periods.map(([k,l]) => `<button data-act="period" data-v="${k}" aria-pressed="${p === k}">${l}</button>`).join('')}</div>
+    ${ctl}
+    <div class="seg" role="group" aria-label="Ko'rinish">
+      <button data-act="view" data-v="jami" aria-pressed="${S.view === 'jami'}">Jami</button>
+      <button data-act="view" data-v="royxat" aria-pressed="${S.view === 'royxat'}">Ro'yxat</button>
+    </div>
+  </div>
+  <div class="stats">
+    <div class="stat i"><span class="m">Kirim</span><b>${fmtNum(s.inc)}</b></div>
+    <div class="stat e"><span class="m">Chiqim</span><b>${fmtNum(s.exp)}</b></div>
+    <div class="stat q"><span class="m">Qoldi</span><b>${fmtNum(s.inc - s.exp)}</b></div>
+  </div>
+  ${body}`;
+}
+
+const DEBT_LABEL = {gave:[`Qarz berdim`,`U qaytardi`], took:[`Qarz oldim`,`Men qaytardim`]};
+function viewDebts(){
+  const bal = balances();
+  const who = bal.filter(b => b.gave > 0.5 || b.took > 0.5);
+  const owedToMe = bal.reduce((a,b) => a + Math.max(b.gave,0), 0);
+  const iOwe = bal.reduce((a,b) => a + Math.max(b.took,0), 0);
+  const hist = [...db.debts].sort(sortDesc).slice(0,40);
+  return `<h1>Qarzlar</h1>
+  <div class="stats" style="grid-template-columns:1fr 1fr">
+    <div class="stat i"><span class="m">Menga qarz</span><b>${fmtNum(owedToMe)}</b></div>
+    <div class="stat e"><span class="m">Men qarzdorman</span><b>${fmtNum(iOwe)}</b></div>
+  </div>
+  <div class="panel">
+    <label class="lbl" for="dquick">Ism va summa</label>
+    <input id="dquick" type="text" autocomplete="off" placeholder="Alisher 200000" value="${esc(S.ddraft)}">
+    ${who.length ? `<div class="chips" style="margin-top:10px">${who.map(b => `<button class="chip" data-act="person" data-name="${esc(b.name)}">${esc(b.name)}</button>`).join('')}</div>` : ''}
+    <div class="grid2">
+      <button class="btn" data-act="debt" data-v="gave">Qarz berdim</button>
+      <button class="btn" data-act="debt" data-v="took">Qarz oldim</button>
+      <button class="btn soft" data-act="debt" data-v="retg">U qaytardi</button>
+      <button class="btn soft" data-act="debt" data-v="rett">Men qaytardim</button>
+    </div>
+    <p class="m" style="margin:12px 0 0">«U qaytardi»: siz qarz bergan odam pulni qaytardi. «Men qaytardim»: siz olgan qarzni qaytardingiz.</p>
+  </div>
+  <h2>Hozirgi holat</h2>
+  <div class="rows">${who.length ? who.map(b => {
+    const out = [];
+    if(b.gave > 0.5) out.push(`<div class="row"><div class="ico" aria-hidden="true">👤</div><div class="grow"><div class="t">${esc(b.name)}</div><div class="m">menga qarz</div></div><div class="amt pos">${fmtNum(b.gave)}</div></div>`);
+    if(b.took > 0.5) out.push(`<div class="row"><div class="ico" aria-hidden="true">👤</div><div class="grow"><div class="t">${esc(b.name)}</div><div class="m">men qarzdorman</div></div><div class="amt neg">${fmtNum(b.took)}</div></div>`);
+    return out.join('');
+  }).join('') : `<div class="empty">Hozircha qarz yo'q.</div>`}</div>
+  <h2>Tarix</h2>
+  <div class="rows">${hist.length ? hist.map(d => {
+    const ret = d.amount < 0;
+    const label = DEBT_LABEL[d.direction][ret ? 1 : 0];
+    return `<div class="row"><div class="grow"><div class="t">${esc(d.person)}</div><div class="m">${label}, ${fmtDay(d.date)}</div></div><div class="amt ${(d.direction === 'gave') !== ret ? 'pos' : 'neg'}">${fmtNum(Math.abs(d.amount))}</div><button class="x" data-act="del-debt" data-id="${esc(d.id)}" aria-label="Qarz yozuvini o'chirish">✕</button></div>`;
+  }).join('') : `<div class="empty">Tarix bo'sh.</div>`}</div>`;
+}
+
+function viewSettings(){
+  const lb = db.lastBackup ? new Date(db.lastBackup).toLocaleDateString('uz-UZ') : 'hali olinmagan';
+  return `<h1>Sozlama</h1>
+  <p class="sub">Yozuvlar soni: ${db.records.length}, qarz yozuvlari: ${db.debts.length}</p>
+  <div class="note">Barcha ma'lumot faqat shu qurilmadagi brauzerda saqlanadi va hech qayerga yuborilmaydi. Brauzer ma'lumotlari tozalansa yoki telefon almashsa, yozuvlar yo'qoladi. Shuning uchun vaqti-vaqti bilan zaxira nusxa oling.</div>
+  <h2>Zaxira nusxa</h2>
+  <p class="m" style="margin:0 0 4px">Oxirgi zaxira: ${esc(lb)}</p>
+  <div class="panel">
+    <button class="btn wide" style="margin-top:0" data-act="export-json">Zaxira nusxani yuklab olish</button>
+    <button class="btn soft wide" data-act="import">Zaxiradan tiklash</button>
+    <input id="file" type="file" accept="application/json,.json" hidden data-change="import">
+    <p class="m" style="margin:12px 0 0">Tiklashda yozuvlar mavjudlariga qo'shiladi, takrorlari o'tkazib yuboriladi. Boshqa telefonga ko'chirish uchun ham shu usul.</p>
+  </div>
+  <h2>Excel uchun</h2>
+  <div class="panel"><button class="btn soft wide" style="margin-top:0" data-act="export-csv">Jadval (CSV) yuklab olish</button></div>
+  <h2>Hamma ma'lumotni o'chirish</h2>
+  <div class="panel"><button class="btn warn wide" style="margin-top:0" data-act="wipe">Hammasini o'chirish</button></div>`;
+}
+
+/* ---------------------------------------------------------- chizish */
+function render(){
+  const views = {home:viewHome, add:viewAdd, report:viewReport, debts:viewDebts, settings:viewSettings};
+  $('#view').innerHTML = views[S.tab]();
+  document.querySelectorAll('nav button').forEach(b => {
+    if(b.dataset.v === S.tab) b.setAttribute('aria-current','page'); else b.removeAttribute('aria-current');
+  });
+}
+function setTab(t){
+  S.tab = t; S.date = null;
+  render(); window.scrollTo(0,0);
+  if(t === 'add'){ const q = $('#quick'); if(q) q.focus({preventScroll:true}); }
+}
+
+/* ---------------------------------------------------------- amallar */
+function submitAdd(){
+  const q = $('#quick').value;
+  const {note, amount} = parseLine(q);
+  if(!amount){ toast("Summani yozing. Masalan: taksi 25000"); return; }
+  const date = ($('#date') && $('#date').value) || todayStr();
+  let cat = null;
+  if(S.kind === 'expense'){
+    cat = S.cat || guessCat(note);
+    if(!cat){
+      const ch = $('#chips'); if(ch) ch.classList.add('need');
+      toast("Bo'limni tanlang"); return;
+    }
+  }
+  const label = S.kind === 'expense' ? (note || catOf(cat).name) : (note || 'kirim');
+  db.records.push({id:uid(), kind:S.kind, cat, note:label.slice(0,120), amount, date, time:date === todayStr() ? nowTime() : '12:00', c:Date.now()});
+  if(!save()){ db.records.pop(); return; }
+  toast(`${S.kind === 'expense' ? catOf(cat).name : 'Kirim'}: ${label}, ${money(amount)}`);
+  S.draft = ''; S.cat = null; S.catManual = false;
+  render();
+  const qi = $('#quick'); if(qi) qi.focus({preventScroll:true});
+}
+
+function submitDebt(type){
+  const {note, amount} = parseLine($('#dquick').value);
+  const person = normName(note);
+  if(!person || !amount){ toast("Ism va summani yozing. Masalan: Alisher 200000"); return; }
+  const map = {gave:['gave',1], took:['took',1], retg:['gave',-1], rett:['took',-1]};
+  const [dir, sign] = map[type];
+  if(sign < 0){
+    const b = balances().find(x => x.name.toLowerCase() === person.toLowerCase());
+    const cur = b ? b[dir] : 0;
+    if(amount > cur + 0.5 && !confirm(`${person} bo'yicha qoldiq ${money(Math.max(cur,0))}. Bundan ko'p qaytarilgan deb yozilsinmi?`)) return;
+  }
+  db.debts.push({id:uid(), direction:dir, person, amount:sign * amount, date:todayStr(), time:nowTime(), c:Date.now()});
+  if(!save()){ db.debts.pop(); return; }
+  const msg = {gave:'Qarz berildi', took:'Qarz olindi', retg:'Qaytardi', rett:'Qaytarildi'}[type];
+  toast(`${msg}: ${person}, ${money(amount)}`);
+  S.ddraft = '';
+  render();
+}
+
+function download(name, text, type){
+  const url = URL.createObjectURL(new Blob([text], {type}));
+  const a = document.createElement('a');
+  a.href = url; a.download = name;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1500);
+}
+function csvCell(v){
+  let s = String(v);
+  if(/^[=+\-@\t\r]/.test(s)) s = "'" + s;
+  return /[",\n\r]/.test(s) ? '"' + s.replace(/"/g,'""') + '"' : s;
+}
+function exportCsv(){
+  const rows = [['Sana','Turi','Bo\'lim','Izoh','Summa']];
+  [...db.records].sort((a,b) => a.date.localeCompare(b.date) || (a.c||0) - (b.c||0)).forEach(r => {
+    rows.push([fmtDay(r.date), r.kind === 'income' ? 'Kirim' : 'Chiqim', r.kind === 'income' ? '' : catOf(r.cat).name, r.note, r.amount]);
+  });
+  rows.push([]);
+  rows.push(['Qarzlar']);
+  rows.push(['Sana','Kim','Turi','Summa']);
+  [...db.debts].sort((a,b) => a.date.localeCompare(b.date)).forEach(d => {
+    rows.push([fmtDay(d.date), d.person, DEBT_LABEL[d.direction][d.amount < 0 ? 1 : 0], Math.abs(d.amount)]);
+  });
+  download(`xarajat-${todayStr()}.csv`, '﻿' + rows.map(r => r.map(csvCell).join(',')).join('\r\n'), 'text/csv;charset=utf-8');
+}
+function exportJson(){
+  const data = {app:'xarajat', version:1, exported:new Date().toISOString(), records:db.records, debts:db.debts};
+  download(`xarajat-zaxira-${todayStr()}.json`, JSON.stringify(data), 'application/json');
+  db.lastBackup = new Date().toISOString(); save();
+  toast('Zaxira nusxa yuklab olindi'); render();
+}
+const okDate = s => typeof s === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(s);
+const okId = s => typeof s === 'string' && /^[\w-]{1,40}$/.test(s);
+const okAmt = n => typeof n === 'number' && isFinite(n) && n !== 0 && Math.abs(n) <= 1e12;
+function importJson(text){
+  let obj;
+  try{ obj = JSON.parse(text); }catch(e){ toast("Fayl o'qilmadi. To'g'ri zaxira faylini tanlang."); return; }
+  if(!obj || typeof obj !== 'object'){ toast("Bu zaxira fayliga o'xshamaydi."); return; }
+  const rIds = new Set(db.records.map(r => r.id)), dIds = new Set(db.debts.map(d => d.id));
+  let ar = 0, ad = 0;
+  for(const r of (Array.isArray(obj.records) ? obj.records : [])){
+    if(!r || (r.kind !== 'income' && r.kind !== 'expense') || !okAmt(r.amount) || r.amount < 0 || !okDate(r.date)) continue;
+    const id = okId(r.id) ? r.id : uid();
+    if(rIds.has(id)) continue;
+    rIds.add(id);
+    db.records.push({id, kind:r.kind, cat:r.kind === 'expense' ? catOf(r.cat).id : null, note:String(r.note || '').slice(0,120) || (r.kind === 'income' ? 'kirim' : catOf(r.cat).name), amount:r.amount, date:r.date, time:/^\d{2}:\d{2}$/.test(r.time) ? r.time : '12:00', c:typeof r.c === 'number' ? r.c : Date.now()});
+    ar++;
+  }
+  for(const d of (Array.isArray(obj.debts) ? obj.debts : [])){
+    if(!d || (d.direction !== 'gave' && d.direction !== 'took') || !okAmt(d.amount) || !okDate(d.date) || !String(d.person || '').trim()) continue;
+    const id = okId(d.id) ? d.id : uid();
+    if(dIds.has(id)) continue;
+    dIds.add(id);
+    db.debts.push({id, direction:d.direction, person:String(d.person).trim().slice(0,60), amount:d.amount, date:d.date, time:/^\d{2}:\d{2}$/.test(d.time) ? d.time : '12:00', c:typeof d.c === 'number' ? d.c : Date.now()});
+    ad++;
+  }
+  save();
+  toast(ar || ad ? `Tiklandi: ${ar} ta yozuv, ${ad} ta qarz` : "Yangi yozuv topilmadi");
+  render();
+}
+
+/* ---------------------------------------------------------- hodisalar */
+document.addEventListener('click', e => {
+  const el = e.target.closest('[data-act]');
+  if(!el) return;
+  const a = el.dataset.act;
+  if(a === 'tab') return setTab(el.dataset.v);
+  if(a === 'kind'){ S.draft = $('#quick').value; S.kind = el.dataset.v; S.cat = null; S.catManual = false; return render(); }
+  if(a === 'cat'){
+    S.cat = (S.cat === el.dataset.id && S.catManual) ? null : el.dataset.id;
+    S.catManual = !!S.cat;
+    document.querySelectorAll('[data-act="cat"]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.id === S.cat)));
+    const ch = $('#chips'); if(ch) ch.classList.remove('need');
+    return;
+  }
+  if(a === 'add') return submitAdd();
+  if(a === 'del-rec'){
+    if(!confirm("Bu yozuv o'chirilsinmi?")) return;
+    db.records = db.records.filter(r => r.id !== el.dataset.id); save(); toast("Yozuv o'chirildi"); return render();
+  }
+  if(a === 'period'){ S.period = el.dataset.v; return render(); }
+  if(a === 'view'){ S.view = el.dataset.v; return render(); }
+  if(a === 'person'){ const i = $('#dquick'); i.value = el.dataset.name + ' '; i.focus(); return; }
+  if(a === 'debt') return submitDebt(el.dataset.v);
+  if(a === 'del-debt'){
+    if(!confirm("Bu qarz yozuvi o'chirilsinmi?")) return;
+    db.debts = db.debts.filter(d => d.id !== el.dataset.id); save(); toast("Yozuv o'chirildi"); return render();
+  }
+  if(a === 'export-json') return exportJson();
+  if(a === 'export-csv') return exportCsv();
+  if(a === 'import') return $('#file').click();
+  if(a === 'wipe'){
+    if(!confirm("Hamma yozuv va qarzlar o'chiriladi. Davom etasizmi?")) return;
+    if(!confirm("Oxirgi marta so'raymiz: bu amalni qaytarib bo'lmaydi. O'chiraymi?")) return;
+    db = {records:[], debts:[], lastBackup:null}; save(); toast("Hamma ma'lumot o'chirildi"); return render();
+  }
+});
+document.addEventListener('change', e => {
+  const t = e.target, k = t.dataset && t.dataset.change;
+  if(!k) return;
+  if(k === 'date') S.date = t.value;
+  else if(k === 'month'){ S.month = +t.value; render(); }
+  else if(k === 'year'){ S.year = +t.value; render(); }
+  else if(k === 'import'){
+    const f = t.files && t.files[0];
+    if(!f) return;
+    if(f.size > 20e6){ toast('Fayl juda katta'); return; }
+    const rd = new FileReader();
+    rd.onload = () => importJson(String(rd.result));
+    rd.onerror = () => toast("Faylni o'qib bo'lmadi");
+    rd.readAsText(f);
+    t.value = '';
+  }
+});
+document.addEventListener('input', e => {
+  if(e.target.id === 'quick'){
+    S.draft = e.target.value;
+    if(S.kind === 'expense' && !S.catManual){
+      S.cat = guessCat(parseLine(S.draft).note);
+      document.querySelectorAll('[data-act="cat"]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.id === S.cat)));
+      const ch = $('#chips'); if(ch && S.cat) ch.classList.remove('need');
+    }
+  }else if(e.target.id === 'dquick'){
+    S.ddraft = e.target.value;
+  }
+});
+document.addEventListener('keydown', e => {
+  if(e.key === 'Enter' && e.target.id === 'quick'){ e.preventDefault(); submitAdd(); }
+});
+
+try{ if(navigator.storage && navigator.storage.persist) navigator.storage.persist(); }catch(e){}
+render();
+})();
+</script>
+</body>
+</html>
